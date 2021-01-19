@@ -1,4 +1,4 @@
-# Library or utils classes to work with OIDC protocol
+# Library or util classes to work with OIDC protocol
 
 ## TokenUtils class
 
