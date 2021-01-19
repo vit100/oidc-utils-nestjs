@@ -3,7 +3,7 @@ import { IAuthOptions } from './iauth-options';
 import { TokenUtils } from './token-utils';
 
 @Global()
-@Module({ providers: [], exports: [] })
+@Module({ providers: [TokenUtils, IAuthOptions], exports: [TokenUtils, IAuthOptions] })
 export class OidcUtilsModule {
   static IAuthOptionsProvider = (options): ValueProvider => {
     return {
@@ -12,11 +12,10 @@ export class OidcUtilsModule {
     };
   };
 
-  static forRootAsync(options: IAuthOptions): DynamicModule {
+  static forRoot(options: IAuthOptions): DynamicModule {
     return {
       module: OidcUtilsModule,
-      providers: [TokenUtils, OidcUtilsModule.IAuthOptionsProvider(options)],
-      exports: [TokenUtils],
+      providers: [OidcUtilsModule.IAuthOptionsProvider(options)],
     };
   }
 }

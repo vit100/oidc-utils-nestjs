@@ -1,18 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IAuthOptions } from './iauth-options';
-import { Issuer, TokenSet } from 'openid-client';
+import { Client, Issuer, TokenSet } from 'openid-client';
 
 @Injectable()
 export class TokenUtils {
   private discoverPromise = null;
   private tokenPromise: Promise<TokenSet> = null;
+  private initialized = false;
+
   constructor(private _options: IAuthOptions) {
-    this.discoAsync().catch((e) => {
-      console.log('Unable to fetch/discovery OIDC metadata');
-    });
+    if (_options.authority && _options.clientId && _options.clientSecret) {
+      this.initialized = true;
+    } else {
+    }
   }
 
-  async discoAsync() {
+  async discoAsync(): Promise<Issuer<Client>> {
+    if (!this.initialized) {
+      this.initErrorMessage();
+      return;
+    }
+
     if (this.discoverPromise) {
       return await this.discoverPromise;
     }
@@ -21,6 +29,11 @@ export class TokenUtils {
   }
 
   async tokenAsync() {
+    if (!this.initialized) {
+      this.initErrorMessage();
+      return;
+    }
+
     if (this.tokenPromise) {
       const tokenSet1 = await this.tokenPromise;
       if (tokenSet1.expired()) {
@@ -46,7 +59,16 @@ export class TokenUtils {
   }
 
   async authHeaderAsync(): Promise<string> {
+    if (!this.initialized) {
+      this.initErrorMessage();
+      return;
+    }
+
     const tokenSet = await this.tokenAsync();
     return `Authorization: Bearer ${tokenSet.access_token}`;
+  }
+
+  private initErrorMessage() {
+    console.log(`Module hasn't initialized. Required config param(s) missed.`);
   }
 }
