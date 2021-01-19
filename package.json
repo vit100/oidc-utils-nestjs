@@ -1,0 +1,50 @@
+{
+  "name": "oidc-utils-nestjs",
+  "version": "1.0.0",
+  "description": "Utils to work with OIDC protocol",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "prepublish": "jest",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --coverage",
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "author": "Vitaliy Mark",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vit100/oidc-utils-nestjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vit100/oidc-utils-nestjs/issues"
+  },
+  "homepage": "https://github.com/vit100/oidc-utils-nestjs",
+  "dependencies": {
+    "@nestjs/common": "^7.6.5",
+    "@nestjs/core": "^7.6.5",
+    "openid-client": "^4.2.3",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.6.3"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^7.6.5",
+    "husky": "^4.3.8",
+    "jest": "^26.6.3",
+    "mockdate": "^3.0.2",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.4.4",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test:ci"
+    }
+  }
+}
