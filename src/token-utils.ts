@@ -1,65 +1,84 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { IAuthOptions } from './iauth-options';
+import { Injectable } from '@nestjs/common';
 import { Client, Issuer, TokenSet } from 'openid-client';
+import { IAuthOptions } from './iauth-options';
 
 @Injectable()
 export class TokenUtils {
-  private discoverPromise = null;
-  private tokenPromise: Promise<TokenSet> = null;
-  private initialized = false;
+  private _discoverPromise = null;
+  private _tokenPromise: Promise<TokenSet> = null;
+  private _initialized = false;
+  private _scheduleRefreshTimeoutHandler: NodeJS.Timeout;
+  private _options: IAuthOptions;
 
-  constructor(private _options: IAuthOptions) {
-    if (_options.authority && _options.clientId && _options.clientSecret) {
-      this.initialized = true;
-    } else {
+  constructor(options: IAuthOptions) {
+    const defaultOptions: IAuthOptions = {
+      authority: null,
+      clientId: null,
+      clientSecret: null,
+      refreshBeforeExpire: 30,
+    };
+    this._options = Object.assign({}, defaultOptions, options);
+    if (options.authority && options.clientId && options.clientSecret) {
+      this._initialized = true;
     }
   }
 
   async discoAsync(): Promise<Issuer<Client>> {
-    if (!this.initialized) {
+    if (!this._initialized) {
       this.initErrorMessage();
       return;
     }
 
-    if (this.discoverPromise) {
-      return await this.discoverPromise;
+    if (this._discoverPromise) {
+      return await this._discoverPromise;
     }
-    this.discoverPromise = Issuer.discover(this._options.authority);
-    return await this.discoverPromise;
+    this._discoverPromise = Issuer.discover(this._options.authority);
+    return await this._discoverPromise;
   }
 
   async tokenAsync() {
-    if (!this.initialized) {
+    if (!this._initialized) {
       this.initErrorMessage();
       return;
     }
 
-    if (this.tokenPromise) {
-      const tokenSet1 = await this.tokenPromise;
-      if (tokenSet1.expired()) {
-        this.tokenPromise = null;
-        this.tokenAsync();
+    let tokenSet: TokenSet;
+
+    if (this._tokenPromise) {
+      tokenSet = await this._tokenPromise;
+      if (tokenSet.expired()) {
+        console.log(`expired at${tokenSet.expires_at} getting new one. ${Date()}`);
+        this._tokenPromise = null;
+        var newTokenSet: TokenSet = await this.tokenAsync();
+        console.log(`new token expire at ${newTokenSet.expires_at}`);
+        return newTokenSet;
       }
-      return tokenSet1;
+      return tokenSet;
+    } else {
+      const issuer = await this.discoAsync();
+      const client = new issuer.Client({
+        client_id: this._options.clientId,
+        client_secret: this._options.clientSecret,
+      });
+      this._tokenPromise = client.grant({
+        grant_type: 'client_credentials',
+        scope: 'openid',
+      });
+
+      tokenSet = await this._tokenPromise;
+
+      if (this._options.refreshBeforeExpire != 0) {
+        this.scheduleTokenRefresh(
+          (tokenSet.expires_at - Math.floor(Date.now() / 1000) - this._options.refreshBeforeExpire) * 1000,
+        );
+      }
+
+      return tokenSet;
     }
-
-    const issuer = await this.discoAsync();
-    const client = new issuer.Client({
-      client_id: this._options.clientId,
-      client_secret: this._options.clientSecret,
-    });
-    this.tokenPromise = client.grant({
-      grant_type: 'client_credentials',
-      scope: 'openid',
-    });
-
-    const tokenSet = await this.tokenPromise;
-
-    return tokenSet;
   }
 
   async authHeaderAsync(): Promise<string> {
-    if (!this.initialized) {
+    if (!this._initialized) {
       this.initErrorMessage();
       return;
     }
@@ -70,5 +89,16 @@ export class TokenUtils {
 
   private initErrorMessage() {
     console.log(`Module hasn't initialized. Required config param(s) missed.`);
+  }
+
+  private scheduleTokenRefresh(t_ms) {
+    if (this._scheduleRefreshTimeoutHandler) {
+      clearTimeout(this._scheduleRefreshTimeoutHandler);
+    }
+    this._scheduleRefreshTimeoutHandler = setTimeout(() => {
+      console.log('refresingggggggggg');
+      this._tokenPromise = null;
+      this.tokenAsync(); //kick in new refresh
+    }, t_ms);
   }
 }

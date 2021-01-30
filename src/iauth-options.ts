@@ -12,4 +12,9 @@ export class IAuthOptions {
    * @param clientSecret OIDC client secret
    */
   clientSecret: string;
+
+  /**
+   * @param refreshBeforeExpire Automatically start to refresh token before in expires in refreshBeforeExpire sec. Default=30 sec 
+   */
+  refreshBeforeExpire?: number = 30
 }

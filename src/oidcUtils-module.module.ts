@@ -5,7 +5,7 @@ import { TokenUtils } from './token-utils';
 @Global()
 @Module({ providers: [TokenUtils, IAuthOptions], exports: [TokenUtils, IAuthOptions] })
 export class OidcUtilsModule {
-  static IAuthOptionsProvider = (options): ValueProvider => {
+  static optionProvider = (options): ValueProvider => {
     return {
       provide: IAuthOptions,
       useValue: options,
@@ -15,7 +15,7 @@ export class OidcUtilsModule {
   static forRoot(options: IAuthOptions): DynamicModule {
     return {
       module: OidcUtilsModule,
-      providers: [OidcUtilsModule.IAuthOptionsProvider(options)],
+      providers: [OidcUtilsModule.optionProvider(options)],
     };
   }
 }

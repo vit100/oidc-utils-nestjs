@@ -29,6 +29,7 @@ Used to get OIDC JWT token from authority with `client_credentials`grant type an
                   authority: 'https://yourOIDCAuthority/', // or well-know
                   clientId: '<CLIENT_ID>',
                   clientSecret: '<CLIENT_Secret>',
+                  refreshBeforeExpire: 30 // Refresh token before it expired. Optional value. Default: 30 sec. Value 0 - means don't  refresh it automatically.
                 }),
           ],
         })
