@@ -16,6 +16,7 @@ export class TokenUtils {
       clientId: null,
       clientSecret: null,
       refreshBeforeExpire: 30,
+      logActivity: false,
     };
     this._options = Object.assign({}, defaultOptions, options);
     if (options.authority && options.clientId && options.clientSecret) {
@@ -29,10 +30,17 @@ export class TokenUtils {
       return;
     }
 
+    this.logMessage('Requesting discovery data.');
+
     if (this._discoverPromise) {
       return await this._discoverPromise;
     }
-    this._discoverPromise = Issuer.discover(this._options.authority);
+    try {
+      this._discoverPromise = Issuer.discover(this._options.authority);
+    } catch (error) {
+      this.logMessage(`Unable to discover. Error: ${error}`);
+      throw error;
+    }
     return await this._discoverPromise;
   }
 
@@ -73,6 +81,7 @@ export class TokenUtils {
         );
       }
 
+      this.logMessage(`Tokenset received sucessfully.`);
       return tokenSet;
     }
   }
@@ -92,13 +101,20 @@ export class TokenUtils {
   }
 
   private scheduleTokenRefresh(t_ms) {
+    this.logMessage(`Refresh for next token scheduled in ${t_ms/1000} sec.`)
     if (this._scheduleRefreshTimeoutHandler) {
       clearTimeout(this._scheduleRefreshTimeoutHandler);
     }
     this._scheduleRefreshTimeoutHandler = setTimeout(() => {
-      console.log('refresingggggggggg');
+      this.logMessage('Scheduled token refresh invoked.');
       this._tokenPromise = null;
       this.tokenAsync(); //kick in new refresh
     }, t_ms);
+  }
+
+  private logMessage(msg) {
+    if (this._options.logActivity) {
+      console.log(`oidc-utils-nestjs: ${msg}`);
+    }
   }
 }

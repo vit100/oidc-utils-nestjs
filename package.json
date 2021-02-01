@@ -1,6 +1,6 @@
 {
   "name": "oidc-utils-nestjs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utils to work with OIDC protocol",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

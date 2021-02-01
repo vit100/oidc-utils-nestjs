@@ -17,4 +17,9 @@ export class IAuthOptions {
    * @param refreshBeforeExpire Automatically start to refresh token before in expires in refreshBeforeExpire sec. Default=30 sec 
    */
   refreshBeforeExpire?: number = 30
+
+  /**
+   * @param log activity into console. Default = false
+   */
+  logActivity?: boolean = false
 }
