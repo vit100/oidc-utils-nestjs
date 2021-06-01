@@ -21,7 +21,7 @@ Used to get OIDC JWT token from authority with `client_credentials`grant type an
         import { OidcUtilsModule } from 'oidc-utils-nestjs';
         ```
 
-    3 Register module import and `LoggingInterceptor` provider
+    3 Register module import `OidcUtilsModule.forRootAsync`
 
         @Module({
           imports: [
