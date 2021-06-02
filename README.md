@@ -57,20 +57,16 @@ export class AppController {
 
 #### TokenUtils
 
-returns discovery data from your authority. See well-known spec
-
-    discoAsync(); 
-
-return valid (not expired) [TokenSet]("https://github.com/panva/
-    node-openid-client/blob/main/docs/README.md#tokenset")
-
+    discoAsync();
+Returns discovery data from your authority. See well-known spec.
+ 
+ 
     tokenAsync();
+Returns valid (not expired) [TokenSet]("https://github.com/panva/node-openid-client/blob/main/docs/README.md#tokenset")
 
-  returns string ready for http client header = `Bearer eyJhbGciOiJSUzI1NiIsIn....`
 
     authHeaderAsync();
-}
-
+Returns string ready for http client header = `Bearer eyJhbGciOiJSUzI1NiIsIn....`
 
 ---
 
