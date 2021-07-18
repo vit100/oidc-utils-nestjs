@@ -4,10 +4,6 @@
 
 Used to get OIDC JWT token from authority with `client_credentials`grant type and `oidc` scope.
 
-## Other classes coming later
-
-
-
 ## How to install
 
 1.  Install npm package:
@@ -61,9 +57,9 @@ export class AppController {
 #### TokenUtils
 
     discoAsync();
-Returns discovery data from your authority. See well-known spec.
- 
- 
+Returns discovery data from your authority. See well-known spec. 
+  
+
     tokenAsync();
 Returns valid (not expired) [TokenSet]("https://github.com/panva/node-openid-client/blob/main/docs/README.md#tokenset")
 
@@ -71,4 +67,3 @@ Returns valid (not expired) [TokenSet]("https://github.com/panva/node-openid-cli
     authHeaderAsync();
 Returns string ready for http client header = `Bearer eyJhbGciOiJSUzI1NiIsIn....`
 
----
