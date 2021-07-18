@@ -55,10 +55,10 @@ export class TokenUtils {
     if (this._tokenPromise) {
       tokenSet = await this._tokenPromise;
       if (tokenSet.expired()) {
-        console.log(`expired at${tokenSet.expires_at} getting new one. ${Date()}`);
+        this.logMessage(`expired at${tokenSet.expires_at} getting new one. ${Date()}`);
         this._tokenPromise = null;
         var newTokenSet: TokenSet = await this.tokenAsync();
-        console.log(`new token expire at ${newTokenSet.expires_at}`);
+        this.logMessage(`new token expire at ${newTokenSet.expires_at}`);
         return newTokenSet;
       }
       return tokenSet;
@@ -97,7 +97,7 @@ export class TokenUtils {
   }
 
   private initErrorMessage() {
-    console.log(`Module hasn't initialized. Required config param(s) missed.`);
+    this.logMessage(`Module hasn't initialized. Required config param(s) missed.`);
   }
 
   private scheduleTokenRefresh(t_ms) {
