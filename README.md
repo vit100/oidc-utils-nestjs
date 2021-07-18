@@ -29,7 +29,8 @@ Used to get OIDC JWT token from authority with `client_credentials`grant type an
                   authority: 'https://yourOIDCAuthority/', // or well-know
                   clientId: '<CLIENT_ID>',
                   clientSecret: '<CLIENT_Secret>',
-                  refreshBeforeExpire: 30 // Refresh token before it expired. Optional value. Default: 30 sec. Value 0 - means don't  refresh it automatically.
+                  refreshBeforeExpire: 30 // Refresh token before it expired in sec. Optional value. Default: 30 sec. Value 0 - means don't  refresh it automatically.
+                  logActivity: false, // Log debug messages into console. Optional value. Default: false
                 }),
           ],
         })
@@ -48,8 +49,10 @@ export class AppController {
   constructor(private _tokenUtils: TokenUtils,) {}
 
   @Get()
-  getHello(): string {
-    return await this._tokenUtils.authHeaderAsync();
+  async getHello(): string {
+    const token = await this._tokenUtils.tokenAsync(); //valid access token. You don't need to check validity explicitly
+    const discoveryInfo = await this._tokenUtils.discoAsync(); // your IDP well-known
+    const httpHeader = await this._tokenUtils.authHeaderAsync(); //this will return HTTP auth header with valid token.
   }
 ```
 
@@ -69,6 +72,3 @@ Returns valid (not expired) [TokenSet]("https://github.com/panva/node-openid-cli
 Returns string ready for http client header = `Bearer eyJhbGciOiJSUzI1NiIsIn....`
 
 ---
-
-Work in progress!!!
-Will add more methods later.
