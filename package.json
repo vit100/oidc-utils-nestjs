@@ -28,7 +28,7 @@
   "dependencies": {
     "@nestjs/common": "^8.0.6",
     "@nestjs/core": "^8.0.6",
-    "openid-client": "^4.7.4",
+    "openid-client": "^4.7.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.3.0"
   },
