@@ -21,11 +21,11 @@ Used to get OIDC JWT token from authority with `client_credentials`grant type an
 
         @Module({
           imports: [
-                OidcUtilsModule.forRootAsync({
+                OidcUtilsModule.forRoot({
                   authority: 'https://yourOIDCAuthority/', // or well-know
                   clientId: '<CLIENT_ID>',
                   clientSecret: '<CLIENT_Secret>',
-                  refreshBeforeExpire: 30 // Refresh token before it expired in sec. Optional value. Default: 30 sec. Value 0 - means don't  refresh it automatically.
+                  refreshBeforeExpire: 30, // Refresh token before it expired in sec. Optional value. Default: 30 sec. Value 0 - means don't  refresh it automatically.
                   logActivity: false, // Log debug messages into console. Optional value. Default: false
                 }),
           ],
